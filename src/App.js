@@ -15,23 +15,30 @@ const itemMapping = {
   'Organic Raw': 200
 }
 
+export const formatCentToDollars = cents => {
+  return `$${cents / 100}`
+}
+
 function App() {
   let [balance, setBalance] = useState(0)
-  let [message, setMessage] = useState('default message')
+  let [message, setMessage] = useState('')
 
   // START VendingMachinePanel
   const validatePurchase = (balance, desiredItem) => {
-    if (balance >= itemMapping[desiredItem]) {
+    const balanceDiff = balance - itemMapping[desiredItem]
+
+    if (balanceDiff >= 0) {
       setMessage(
-        `Enjoy your ${desiredItem}. Here your change of $${Math.abs(
-          (balance - itemMapping[desiredItem]) / 100
-        )} <dispense item>`
+        `Enjoy your ${desiredItem}. Here your change of ${formatCentToDollars(Math.abs(balanceDiff))} <dispense item>`
       )
+      // TODO break down total change into coins
       setBalance(0)
     } else {
       setMessage(
-        `Sorry your current balance of ${balance} is not enough. Please insert at least $${Math.abs(
-          (balance - itemMapping[desiredItem]) / 100
+        `Sorry your current balance of ${formatCentToDollars(
+          balance
+        )} is not enough. Please insert at least ${formatCentToDollars(
+          Math.abs(balanceDiff)
         )} to purchase ${desiredItem}`
       )
     }
@@ -42,7 +49,7 @@ function App() {
   const validateCoin = coinType => {
     if (coinMapping[coinType]) {
       setBalance((balance += coinMapping[coinType]))
-      setMessage(`Current Balance is: $${balance / 100}`)
+      setMessage(`Current Balance is: ${formatCentToDollars(balance)}`)
     } else {
       setMessage(`Sorry we do not accept ${coinType} at the moment. <return coin>`)
     }
@@ -63,9 +70,9 @@ function App() {
 
   Object.keys(itemMapping).forEach(key => {
     itemList.push(
-      <div>
+      <div key={key}>
         <button onClick={evt => handleItemClick(evt)}>{key}</button>
-        Costs: {`$${itemMapping[key] / 100}`}
+        Costs: {`${formatCentToDollars(itemMapping[key])}`}
       </div>
     )
   })
@@ -73,6 +80,8 @@ function App() {
 
   return (
     <div className="App">
+      <h1>Delicious Vegan Chocolate</h1>
+
       <div id="VendingMachinePanel">
         <div id="CoinSlot">
           CoinSlot:
