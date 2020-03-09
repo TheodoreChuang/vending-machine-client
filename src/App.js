@@ -20,7 +20,22 @@ function App() {
   let [message, setMessage] = useState('default message')
 
   // START VendingMachinePanel
-  // logic here
+  const validatePurchase = (balance, desiredItem) => {
+    if (balance >= itemMapping[desiredItem]) {
+      setMessage(
+        `Enjoy your ${desiredItem}. Here your change of $${Math.abs(
+          (balance - itemMapping[desiredItem]) / 100
+        )} <dispense item>`
+      )
+      setBalance(0)
+    } else {
+      setMessage(
+        `Sorry your current balance of ${balance} is not enough. Please insert at least $${Math.abs(
+          (balance - itemMapping[desiredItem]) / 100
+        )} to purchase ${desiredItem}`
+      )
+    }
+  }
   // END VendingMachinePanel
 
   // START CoinSlot
@@ -41,13 +56,18 @@ function App() {
 
   // START ItemSelector
   const handleItemClick = evt => {
-    console.log(evt.target.innerText)
+    validatePurchase(balance, evt.target.innerText)
   }
 
   const itemList = []
 
   Object.keys(itemMapping).forEach(key => {
-    itemList.push(<button onClick={evt => handleItemClick(evt)}>{key}</button>)
+    itemList.push(
+      <div>
+        <button onClick={evt => handleItemClick(evt)}>{key}</button>
+        Costs: {`$${itemMapping[key] / 100}`}
+      </div>
+    )
   })
   // END ItemSelector
 
