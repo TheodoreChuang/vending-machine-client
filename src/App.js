@@ -19,6 +19,11 @@ function App() {
   let [balance, setBalance] = useState(0)
   let [message, setMessage] = useState('default message')
 
+  // START VendingMachinePanel
+  // logic here
+  // END VendingMachinePanel
+
+  // START CoinSlot
   const validateCoin = coinType => {
     if (coinMapping[coinType]) {
       setBalance((balance += coinMapping[coinType]))
@@ -30,9 +35,21 @@ function App() {
 
   const insertCoin = () => {
     const coinType = prompt(`Insert your coin. Accepted coins are: ${Object.keys(coinMapping)}`)
-    console.log(coinType)
     validateCoin(coinType)
   }
+  // END CoinSlot
+
+  // START ItemSelector
+  const handleItemClick = evt => {
+    console.log(evt.target.innerText)
+  }
+
+  const itemList = []
+
+  Object.keys(itemMapping).forEach(key => {
+    itemList.push(<button onClick={evt => handleItemClick(evt)}>{key}</button>)
+  })
+  // END ItemSelector
 
   return (
     <div className="App">
@@ -42,7 +59,10 @@ function App() {
           <button onClick={insertCoin}>Insert Coin</button>
         </div>
 
-        <div id="ItemSelector">ItemSelector</div>
+        <div id="ItemSelector">
+          ItemSelector:
+          {itemList}
+        </div>
 
         <div id="Message">{message}</div>
       </div>
